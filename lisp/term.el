@@ -1093,6 +1093,7 @@ Entry to this mode runs the hooks on `term-mode-hook'."
 
   (set (make-local-variable 'term-ansi-at-host) (system-name))
   (set (make-local-variable 'term-ansi-at-dir) default-directory)
+  (set (make-local-variable 'term-ansi-at-user) (user-real-login-name))
   (set (make-local-variable 'term-ansi-at-message) nil)
 
   ;; For user tracking purposes -mm
@@ -2728,7 +2729,7 @@ See `term-prompt-regexp'."
 	(setq default-directory
 	      (file-name-as-directory
 	       (if (and (string= term-ansi-at-host (system-name))
-					(string= term-ansi-at-user (user-real-login-name)))
+                        (string= term-ansi-at-user (user-real-login-name)))
 		   (expand-file-name term-ansi-at-dir)
 		 (if (string= term-ansi-at-user (user-real-login-name))
 		     (concat "/" term-ansi-at-host ":" term-ansi-at-dir)
