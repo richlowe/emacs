@@ -54,11 +54,7 @@
   :link '(custom-manual "(rcirc)")
   :group 'applications)
 
-(defcustom rcirc-server-alist
-  '(("irc.freenode.net" :channels ("#rcirc")
-     ;; Don't use the TLS port by default, in case gnutls is not available.
-     ;; :port 7000 :encryption tls
-     ))
+(defcustom rcirc-server-alist nil
   "An alist of IRC connections to establish when running `rcirc'.
 Each element looks like (SERVER-NAME PARAMETERS).
 
