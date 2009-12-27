@@ -582,8 +582,12 @@ is considered unsafe if this variable is nil."
 
 ;;;###autoload
 (defcustom compilation-ask-about-save t
-  "Non-nil means \\[compile] asks which buffers to save before compiling.
-Otherwise, it saves all modified buffers without asking."
+  "Controls whether \\[compile] asks which buffers to save before compiling.
+
+t        -- prompt for which buffers to save.
+nil      -- save all file-visiting buffers without prompting.
+neither  -- neither prompt nor save."
+
   :type 'boolean
   :group 'compilation)
 
@@ -1455,8 +1459,8 @@ to a function that generates a unique name."
     (consp current-prefix-arg)))
   (unless (equal command (eval compile-command))
     (setq compile-command command))
-  (save-some-buffers (not compilation-ask-about-save)
-                     compilation-save-buffers-predicate)
+  (unless (eq compilation-ask-about-save 'neither)
+    (save-some-buffers (not compilation-ask-about-save) compilation-save-buffers-predicate))
   (setq-default compilation-directory default-directory)
   (compilation-start command comint))
 
@@ -1467,10 +1471,10 @@ If this is run in a Compilation mode buffer, re-use the arguments from the
 original use.  Otherwise, recompile using `compile-command'.
 If the optional argument `edit-command' is non-nil, the command can be edited."
   (interactive "P")
-  (save-some-buffers (not compilation-ask-about-save)
-                     compilation-save-buffers-predicate)
+  (unless (eq compilation-ask-about-save 'neither)
+    (save-some-buffers (not compilation-ask-about-save) compilation-save-buffers-predicate))
   (let ((default-directory (or compilation-directory default-directory))
-	(command (eval compile-command)))
+        (command (eval compile-command)))
     (when edit-command
       (setq command (compilation-read-command (or (car compilation-arguments)
 						  command)))
