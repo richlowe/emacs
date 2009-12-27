@@ -1177,6 +1177,10 @@ See also `erc-show-my-nick'."
   "ERC nickname face for private messages."
   :group 'erc-faces)
 
+(defface erc-nick-surround-face '((t (:inherit erc-nick-default-face)))
+  "ERC nickname surround face."
+  :group 'erc-faces)
+
 ;; Debugging support
 
 (defvar erc-log-p nil
@@ -4172,15 +4176,19 @@ and as second argument the event parsed as a vector."
   (let* ((mark-s (if msgp (if privp "*" "<") "-"))
 	 (mark-e (if msgp (if privp "*" ">") "-"))
 	 (str	 (format "%s%s%s %s" mark-s nick mark-e msg))
-	 (nick-face (if privp 'erc-nick-msg-face 'erc-nick-default-face))
+	 (nick-face (cond
+		     ((string= nick (erc-current-nick))
+		      'erc-my-nick-face)
+		     (privp 'erc-nick-msg-face)
+		     (t 'erc-nick-default-face)))
 	 (msg-face (if privp 'erc-direct-msg-face 'erc-default-face)))
     ;; add text properties to text before the nick, the nick and after the nick
-    (erc-put-text-property 0 (length mark-s) 'face msg-face str)
-    (erc-put-text-property (length mark-s) (+ (length mark-s) (length nick))
-			   'face nick-face str)
-    (erc-put-text-property (+ (length mark-s) (length nick)) (length str)
-			   'face msg-face str)
-    str))
+    (concat
+     (erc-propertize mark-s 'face 'erc-nick-surround-face)
+     (erc-propertize nick 'face nick-face)
+     (erc-propertize mark-e 'face 'erc-nick-surround-face)
+     " "
+     (erc-propertize msg 'face msg-face))))
 
 (defcustom erc-format-nick-function 'erc-format-nick
   "Function to format a nickname for message display."
@@ -4209,9 +4217,9 @@ See also `erc-format-nick-function'."
 	    (close "> ")
 	    (nick (erc-current-nick)))
 	(concat
-	 (erc-propertize open 'face 'erc-default-face)
+	 (erc-propertize open 'face 'erc-nick-surround-face)
 	 (erc-propertize nick 'face 'erc-my-nick-face)
-	 (erc-propertize close 'face 'erc-default-face)))
+	 (erc-propertize close 'face 'erc-nick-surround-face)))
     (let ((prefix "> "))
       (erc-propertize prefix 'face 'erc-default-face))))
 
