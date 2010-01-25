@@ -70,6 +70,12 @@ call `cancel-timer' or `timer-activate' on `midnight-timer' instead."
 
 ;;; clean-buffer-list stuff
 
+(defcustom clean-buffer-list-never-kill-modes '()
+  "List of major modes that should never be killed by
+`clean-buffer-list'."
+  :type '(repeat (symbol :tag "Mode name"))
+  :group 'midnight)
+
 (defcustom clean-buffer-list-delay-general 3
   "The number of days before any buffer becomes eligible for autokilling.
 The autokilling is done by `clean-buffer-list' when is it in `midnight-hook'.
@@ -177,6 +183,8 @@ lifetime, i.e., its \"age\" when it will be purged."
 		    (midnight-find bn clean-buffer-list-kill-never-buffer-names
 				   'string-equal)
 		    (get-buffer-process buf)
+                    (memq (buffer-local-value 'major-mode buf)
+                          clean-buffer-list-never-kill-modes)
 		    (and (buffer-file-name buf) (buffer-modified-p buf))
 		    (get-buffer-window buf 'visible) (< delay cbld))
 	  (message "[%s] killing `%s'" ts bn)
