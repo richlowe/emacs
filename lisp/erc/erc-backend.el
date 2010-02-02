@@ -1868,6 +1868,15 @@ See `erc-display-server-message'." nil
     (erc-display-message parsed '(notice error) 'active
                          's401 ?n nick/channel)))
 
+(define-erc-response-handler (402)
+  "No such server." nil
+  (let ((server (second (erc-response.command-args parsed))))
+    (when erc-whowas-on-nosuchnick
+      (erc-log (format "cmd: WHOWAS: %s" server))
+      (erc-server-send (format "WHOWAS %s 1" server)))
+    (erc-display-message parsed '(notice error) 'active
+                         's402 ?n server)))
+
 (define-erc-response-handler (403)
   "No such channel." nil
   (erc-display-message parsed '(notice error) 'active

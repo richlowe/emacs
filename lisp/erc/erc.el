@@ -6470,6 +6470,7 @@ All windows are opened in the current frame."
    (s379   . "%c: Forwarded to %f")
    (s391   . "The time at %s is %t")
    (s401   . "%n: No such nick/channel")
+   (s402   . "%n: No such nick/channel")
    (s403   . "%c: No such channel")
    (s404   . "%c: Cannot send to channel")
    (s405   . "%c: You have joined too many channels")
