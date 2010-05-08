@@ -367,7 +367,8 @@ If the argument is a list, the files must all have the same back end."
   ;; `file' can be nil in several places (typically due to the use of
   ;; code like (vc-backend buffer-file-name)).
   (cond ((stringp file-or-list)
-	 (let ((property (vc-file-getprop file-or-list 'vc-backend)))
+         (let* ((file-or-list (expand-file-name file-or-list))
+                (property (vc-file-getprop file-or-list 'vc-backend)))
 	   ;; Note that internally, Emacs remembers unregistered
 	   ;; files by setting the property to `none'.
 	   (cond ((eq property 'none) nil)
@@ -377,7 +378,7 @@ If the argument is a list, the files must all have the same back end."
 			(vc-file-getprop file-or-list 'vc-backend)
 		      nil)))))
 	((and file-or-list (listp file-or-list))
-	 (vc-backend (car file-or-list)))
+         (vc-backend (expand-file-name (car file-or-list))))
 	(t
 	 nil)))
 
