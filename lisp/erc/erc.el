@@ -2394,7 +2394,11 @@ If STRING is nil, the function does nothing."
 		   (list (process-buffer erc-server-process)))
 		  (t (list (current-buffer)))))
       (when (buffer-live-p buf)
-	(erc-display-line-1 string buf)
+	(let ((resp (get-text-property 0 'erc-parsed string)))
+	  (unless (and resp
+		       (member (erc-response.command resp)
+			       (buffer-local-value 'erc-hide-list buf)))
+	    (erc-display-line-1 string buf)))
 	(push buf new-bufs)))
     (when (null new-bufs)
       (erc-display-line-1 string (if (erc-server-buffer-live-p)
