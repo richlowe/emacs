@@ -1596,9 +1596,7 @@ See `erc-display-server-message'." nil
                        ?r (erc-response.contents parsed)))
 
 (define-erc-response-handler (303)
-  "ISON reply" nil
-  (erc-display-message parsed 'notice 'active 's303
-                       ?n (cadr (erc-response.command-args parsed))))
+  "ISON reply" nil nil)
 
 (define-erc-response-handler (305)
   "Return from AWAYness." nil
