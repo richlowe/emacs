@@ -5911,6 +5911,24 @@ not_in_argv (NSString *arg)
   return frameSize;
 }
 
+/*
+ * An NSWindow isVisible even when off the active space, which confuses code
+ * which expects a 'visible' window to be one which the user can see.  Latch
+ * window state updates, and forcibly frob the visibility of the frame based
+ * on whether its NSWindow is on the active space.
+ *
+ * We also need to make the frame re-visible when coming back onto the active
+ * space, so any frame whose NSWindow is on the active space and is visible is
+ * itself marked visible.
+ */
+- (void)windowDidUpdate: (NSNotification *)notification
+{
+  if ([[self window] isOnActiveSpace] == NO) {
+    emacsframe->async_visible = 0;
+  } else if ([[self window] isVisible] == YES) {
+    emacsframe->async_visible = 1;
+  }
+}
 
 - (void)windowDidResize: (NSNotification *)notification
 {
