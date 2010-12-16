@@ -185,6 +185,7 @@ lifetime, i.e., its \"age\" when it will be purged."
 		    (get-buffer-process buf)
                     (memq (buffer-local-value 'major-mode buf)
                           clean-buffer-list-never-kill-modes)
+                    (buffer-local-value 'server-buffer-clients buf)
 		    (and (buffer-file-name buf) (buffer-modified-p buf))
 		    (get-buffer-window buf 'visible) (< delay cbld))
 	  (message "[%s] killing `%s'" ts bn)
