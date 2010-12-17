@@ -3,5 +3,24 @@ ctags.c
 stamp_BLD
 echolisp.tmp
 
+Makefile.c
+b2m
+ctags
+digest-doc
+ebrowse
+emacsclient
+etags
+fakemail
+hexl
+make-docfile
+movemail
+profile
+sorted-doc
+test-distrib
+update-game-score
+
 oo/
 oo-spd/
+
+*.dSYM/
+

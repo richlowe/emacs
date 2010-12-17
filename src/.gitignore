@@ -4,5 +4,15 @@ epaths.h
 stamp_BLD
 stamp-h.in
 
+Makefile.c
+bootstrap-emacs
+emacs
+emacs-2*
+prefix-args
+stamp-oldxmenu
+temacs
+
 oo/
 oo-spd/
+deps/
+

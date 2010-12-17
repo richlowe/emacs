@@ -9,10 +9,13 @@ missing
 lib/Makefile.in
 src/config.in
 autom4te.cache
-makefile
+Makefile
 TAGS
 *~
 /README.W32
+*.o
+config.log
+config.status
 
 /bin/
 /site-lisp/
