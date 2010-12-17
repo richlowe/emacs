@@ -311,7 +311,7 @@ matching the resulting Git log output, and KEYWORDS is a list of
 		     (?\120 "   (symlink)")
 		     (?\160 "   (subproject)")))
 		  (_ (format "   (unknown type %o)" new-type)))))
-    (cond (str (propertize str 'face 'font-lock-comment-face))
+    (cond (str (propertize str 'face 'vc-dir-extra-face))
           ((eq new-type ?\110) "/")
           (t ""))))
 
@@ -329,7 +329,7 @@ or an empty string if none."
                  (vc-git-escape-file-name
                   (vc-git-extra-fileinfo->orig-name extra))
                  ")")
-         'face 'font-lock-comment-face)
+         'face 'vc-dir-extra-face)
       "")))
 
 (defun vc-git-permissions-as-string (old-perm new-perm)
@@ -340,7 +340,7 @@ or an empty string if none."
            (eq 0 (logand ?\111 (logxor old-perm new-perm))))
        "  "
      (if (eq 0 (logand ?\111 old-perm)) "+x" "-x"))
-  'face 'font-lock-type-face))
+  'face 'vc-dir-extra-face))
 
 (defun vc-git-dir-printer (info)
   "Pretty-printer for the vc-dir-fileinfo structure."
@@ -352,19 +352,19 @@ or an empty string if none."
     (insert
      "  "
      (propertize (format "%c" (if (vc-dir-fileinfo->marked info) ?* ? ))
-                 'face 'font-lock-type-face)
+                 'face 'vc-dir-mark-face)
      "  "
      (propertize
       (format "%-12s" state)
-      'face (cond ((eq state 'up-to-date) 'font-lock-builtin-face)
-		  ((eq state 'missing) 'font-lock-warning-face)
-		  (t 'font-lock-variable-name-face))
+      'face (cond ((eq state 'up-to-date) 'vc-dir-up-to-date-face)
+		  ((eq state 'missing) 'vc-dir-missing-face)
+		  (t 'vc-dir-normal-face))
       'mouse-face 'highlight)
      "  " (vc-git-permissions-as-string old-perm new-perm)
      "    "
      (propertize (vc-git-escape-file-name (vc-dir-fileinfo->name info))
-                 'face (if isdir 'font-lock-comment-delimiter-face
-                         'font-lock-function-name-face)
+                 'face (if isdir 'vc-dir-directory-face
+                         'vc-dir-file-face)
 		 'help-echo
 		 (if isdir
 		     "Directory\nVC operations can be applied to it\nmouse-3: Pop-up menu"
@@ -549,15 +549,15 @@ or an empty string if none."
       (setq branch "not (detached HEAD)"))
     ;; FIXME: maybe use a different face when nothing is stashed.
     (concat
-     (propertize "Branch     : " 'face 'font-lock-type-face)
+     (propertize "Branch     : " 'face 'vc-dir-header-name-face)
      (propertize branch
-		 'face 'font-lock-variable-name-face)
+		 'face 'vc-dir-header-value-face)
      (when remote
        (concat
 	"\n"
-	(propertize "Remote     : " 'face 'font-lock-type-face)
+	(propertize "Remote     : " 'face 'vc-dir-header-name-face)
 	(propertize remote-url
-		    'face 'font-lock-variable-name-face)))
+		    'face 'vc-dir-header-value-face)))
      "\n"
      ;; For now just a heading, key bindings can be added later for various bisect actions
      (when (file-exists-p (expand-file-name ".git/BISECT_START" (vc-git-root dir)))
@@ -566,22 +566,22 @@ or an empty string if none."
        (propertize  "Rebase     : in progress\n" 'face 'font-lock-warning-face))
      (if stash
        (concat
-	(propertize "Stash      :\n" 'face 'font-lock-type-face
+	(propertize "Stash      :\n" 'face 'vc-dir-header-name-face
 		    'help-echo stash-help-echo)
 	(mapconcat
 	 (lambda (x)
 	   (propertize x
-		       'face 'font-lock-variable-name-face
+		       'face 'vc-dir-header-value-face
 		       'mouse-face 'highlight
 		       'help-echo "mouse-3: Show stash menu\nRET: Show stash\nA: Apply stash\nP: Apply and remove stash (pop)\nC-k: Delete stash"
 		       'keymap vc-git-stash-map))
 	 stash "\n"))
        (concat
-	(propertize "Stash      : " 'face 'font-lock-type-face
+	(propertize "Stash      : " 'face 'vc-dir-header-name-face
 		    'help-echo stash-help-echo)
 	(propertize "Nothing stashed"
 		    'help-echo stash-help-echo
-		    'face 'font-lock-variable-name-face))))))
+		    'face 'vc-dir-header-value-face))))))
 
 (defun vc-git-branches ()
   "Return the existing branches, as a list of strings.

@@ -78,6 +78,50 @@ See `run-hooks'."
 (defvar vc-dir-backend nil
   "The backend used by the current *vc-dir* buffer.")
 
+(defface vc-dir-header-name-face '((t (:inherit font-lock-type-face)))
+  "Face used to highlight vc-dir header fields"
+  :group 'vc)
+
+(defface vc-dir-header-value-face '((t (:inherit font-lock-variable-name-face)))
+  "Face used to highlight vc-dir header values"
+  :group 'vc)
+
+(defface vc-dir-up-to-date-face '((t (:inherit font-lock-builtin-face)))
+  "Face used for up-to-date files in vc-dir buffers"
+  :group 'vc)
+
+(defface vc-dir-conflict-face '((t (:inherit font-lock-warning-face)))
+  "Face used for conflicting files in vc-dir buffers"
+  :group 'vc)
+
+(defface vc-dir-edited-face '((t (:inherit font-lock-warning-face)))
+  "Face used for edited files in vc-dir buffers"
+  :group 'vc)
+
+(defface vc-dir-missing-face '((t (:inherit font-lock-warning-face)))
+  "Face used for missing files in vc-dir buffers"
+  :group 'vc)
+
+(defface vc-dir-normal-face '((t (:inherit font-lock-variable-name-face)))
+  "Face used for normal files in vc-dir buffers"
+  :group 'vc)
+
+(defface vc-dir-mark-face '((t (:inherit font-lock-type-face)))
+  "Face used for the mark in vc-dir buffers"
+  :group 'vc )
+
+(defface vc-dir-file-face '((t (:inherit font-lock-function-name-face)))
+  "Face used for file names in vc-dir buffers"
+  :group 'vc)
+
+(defface vc-dir-directory-face '((t (:inherit font-lock-comment-delimiter-face)))
+  "Face used for file names in vc-dir buffers"
+  :group 'vc)
+
+(defface vc-dir-extra-face '((t (:inherit font-lock-comment-face)))
+  "Face used for backend-specific extras in vc-dir buffers"
+  :group 'vc)
+
 (defun vc-dir-move-to-goal-column ()
   ;; Used to keep the cursor on the file name column.
   (beginning-of-line)
@@ -1005,11 +1049,11 @@ It calls the `dir-extra-headers' backend method to display backend
 specific headers."
   (concat
    ;; First layout the common headers.
-   (propertize "VC backend : " 'face 'font-lock-type-face)
-   (propertize (format "%s\n" backend) 'face 'font-lock-variable-name-face)
-   (propertize "Working dir: " 'face 'font-lock-type-face)
+   (propertize "VC backend : " 'face 'vc-dir-header-name-face)
+   (propertize (format "%s\n" backend) 'face 'vc-dir-header-value-face)
+   (propertize "Working dir: " 'face 'vc-dir-header-name-face)
    (propertize (format "%s\n" (abbreviate-file-name dir))
-               'face 'font-lock-variable-name-face)
+               'face 'vc-dir-header-value-face)
    ;; Then the backend specific ones.
    (vc-call-backend backend 'dir-extra-headers dir)
    "\n"))
@@ -1253,7 +1297,7 @@ These are the commands available for use in the file status buffer:
   ;; backend specific headers.
   ;; XXX: change this to return nil before the release.
   (concat
-   (propertize "Extra      : " 'face 'font-lock-type-face)
+   (propertize "Extra      : " 'face 'vc-dir-header-name-face)
    (propertize "Please add backend specific headers here.  It's easy!"
 	       'face 'font-lock-warning-face)))
 
@@ -1275,20 +1319,21 @@ These are the commands available for use in the file status buffer:
     (insert
      (propertize
       (format "%c" (if (vc-dir-fileinfo->marked fileentry) ?* ? ))
-      'face 'font-lock-type-face)
+      'face 'vc-dir-mark-face)
      "   "
      (propertize
       (format "%-20s" state)
-      'face (cond ((eq state 'up-to-date) 'font-lock-builtin-face)
-		  ((memq state '(missing conflict)) 'font-lock-warning-face)
-		  ((eq state 'edited) 'font-lock-constant-face)
-		  (t 'font-lock-variable-name-face))
+      'face (cond ((eq state 'up-to-date) 'vc-dir-up-to-date-face)
+                  ((eq state 'missing) 'vc-dir-missing-face)
+                  ((eq state 'conflict) 'vc-dir-conflict-face)
+                  ((eq state 'edited) 'vc-dir-edited-face)
+		  (t 'vc-dir-normal-face))
       'mouse-face 'highlight)
      " "
      (propertize
       (format "%s" filename)
       'face
-      (if isdir 'font-lock-comment-delimiter-face 'font-lock-function-name-face)
+      (if isdir 'vc-dir-directory-face 'vc-dir-file-face)
       'help-echo
       (if isdir
 	  "Directory\nVC operations can be applied to it\nmouse-3: Pop-up menu"

@@ -543,7 +543,7 @@ REV is the revision to check out into WORKFILE."
                          (`renamed-from "renamed from")
                          (`renamed-to "renamed to"))
                        (vc-hg-extra-fileinfo->extra-name extra))
-               'face 'font-lock-comment-face)))))
+               'face 'vc-dir-extra-face)))))
 
 (defun vc-hg-after-dir-status (update-function)
   (let ((file nil)
@@ -613,12 +613,12 @@ REV is the revision to check out into WORKFILE."
    (vc-hg-after-dir-status update-function)))
 
 (defun vc-hg-dir-extra-header (name &rest commands)
-  (concat (propertize name 'face 'font-lock-type-face)
+  (concat (propertize name 'face 'vc-dir-header-name-face)
           (propertize
            (with-temp-buffer
              (apply 'vc-hg-command (current-buffer) 0 nil commands)
              (buffer-substring-no-properties (point-min) (1- (point-max))))
-           'face 'font-lock-variable-name-face)))
+           'face 'vc-dir-header-value-face)))
 
 (defun vc-hg-dir-extra-headers (dir)
   "Generate extra status headers for a Mercurial tree."
