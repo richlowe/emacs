@@ -6499,6 +6499,7 @@ All windows are opened in the current frame."
    (s483   . "You can't kill a server!")
    (s484   . "Your connection is restricted!")
    (s485   . "You're not the original channel operator")
+   (s486   . "You must log in with services to message this user")
    (s491   . "No O-lines for your host")
    (s501   . "Unknown MODE flag")
    (s502   . "You can't change modes for other users")

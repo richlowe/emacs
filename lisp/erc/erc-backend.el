@@ -1981,7 +1981,7 @@ See `erc-display-server-message'." nil
                          ?n nick ?a securemsg)))
 
 (define-erc-response-handler (431 445 446 451 462 463 464 481 483 484 485
-                                  491 501 502)
+                                  486 491 501 502)
   ;; 431 - No nickname given
   ;; 445 - SUMMON has been disabled
   ;; 446 - USERS has been disabled
