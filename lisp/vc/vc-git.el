@@ -521,6 +521,14 @@ or an empty string if none."
 		  :help "Show the contents of the current stash"))
     map))
 
+(defun vc-git--print-stash (stash)
+  (propertize stash
+              'face 'vc-dir-header-value-face
+              'mouse-face 'highlight
+              'help-echo "mouse-3: Show stash menu\nRET: Show stash\nA: Apply stash\nP: Apply and remove stash (pop)\nC-k: Delete stash"
+              'keymap vc-git-stash-map
+              'vc-git-stash (replace-regexp-in-string "^ *\\({[0-9]+}\\).*" "\\1" stash)))
+
 (defun vc-git-dir-extra-headers (dir)
   (let ((str (with-output-to-string
                (with-current-buffer standard-output
@@ -566,16 +574,14 @@ or an empty string if none."
        (propertize  "Rebase     : in progress\n" 'face 'font-lock-warning-face))
      (if stash
        (concat
-	(propertize "Stash      :\n" 'face 'vc-dir-header-name-face
+	(propertize "Stash      : " 'face 'vc-dir-header-name-face
 		    'help-echo stash-help-echo)
+        (vc-git--print-stash (car stash))
+        "\n"
 	(mapconcat
 	 (lambda (x)
-	   (propertize x
-		       'face 'vc-dir-header-value-face
-		       'mouse-face 'highlight
-		       'help-echo "mouse-3: Show stash menu\nRET: Show stash\nA: Apply stash\nP: Apply and remove stash (pop)\nC-k: Delete stash"
-		       'keymap vc-git-stash-map))
-	 stash "\n"))
+	   (vc-git--print-stash (concat "             " x)))
+         (cdr stash) "\n"))
        (concat
 	(propertize "Stash      : " 'face 'vc-dir-header-name-face
 		    'help-echo stash-help-echo)
@@ -1165,16 +1171,13 @@ This command shares argument histories with \\[rgrep] and \\[grep]."
    ""
    (split-string
     (replace-regexp-in-string
-     "^stash@" "             " (vc-git--run-command-string nil "stash" "list"))
+     "^stash@" "" (vc-git--run-command-string nil "stash" "list"))
     "\n")))
 
 (defun vc-git-stash-get-at-point (point)
   (save-excursion
-    (goto-char point)
-    (beginning-of-line)
-    (if (looking-at "^ +\\({[0-9]+}\\):")
-	(match-string 1)
-      (error "Cannot find stash at point"))))
+    (or (get-text-property point 'vc-git-stash)
+        (error "Cannot find stash at point"))))
 
 ;; vc-git-stash-delete-at-point must be called from a vc-dir buffer.
 (declare-function vc-dir-refresh "vc-dir" ())
