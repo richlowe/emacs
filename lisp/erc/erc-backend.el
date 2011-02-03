@@ -1980,8 +1980,9 @@ See `erc-display-server-message'." nil
     (erc-display-message parsed 'notice 'active 's671
                          ?n nick ?a securemsg)))
 
-(define-erc-response-handler (431 445 446 451 462 463 464 481 483 484 485
-                                  486 491 501 502)
+(define-erc-response-handler (263 431 445 446 451 462 463 464 481 483 484
+                                  485 486 491 501 502)
+  ;; 263 - WHOIS is rate-limited
   ;; 431 - No nickname given
   ;; 445 - SUMMON has been disabled
   ;; 446 - USERS has been disabled
@@ -1993,6 +1994,7 @@ See `erc-display-server-message'." nil
   ;; 483 - You can't kill a server!
   ;; 484 - Your connection is restricted!
   ;; 485 - You're not the original channel operator
+  ;; 486 - PRIVMSG requires services identification
   ;; 491 - No O-lines for your host
   ;; 501 - Unknown MODE flag
   ;; 502 - Cannot change mode for other users
