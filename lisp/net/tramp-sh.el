@@ -3952,6 +3952,9 @@ process to set up.  VEC specifies the connection."
 		      (tramp-get-connection-property vec "uname" ""))
     (tramp-send-command vec "stty -oxtabs" t))
 
+  (when (string-match "SunOS" (tramp-get-connection-property vec "uname" ""))
+    (tramp-send-command vec "stty tab0"))
+
   ;; Set `remote-tty' process property.
   (let ((tty (tramp-send-command-and-read vec "echo \\\"`tty`\\\"" 'noerror)))
     (unless (zerop (length tty))
