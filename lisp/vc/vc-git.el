@@ -1268,6 +1268,23 @@ Returns nil if not possible."
                                                       (1- (point-max)))))))
          (and name (not (string= name "undefined")) name))))
 
+(defun vc-git-buffer-has-conflict-markers-p ()
+  (save-excursion
+    (goto-char (point-min))
+    (re-search-forward "^<<<<<<< HEAD" nil t)))
+
+(defun vc-git-resolve-when-done ()
+    (unless (vc-git-buffer-has-conflict-markers-p)
+      (vc-git-command nil 0 buffer-file-name "add")
+      (remove-hook 'after-save-hook 'vc-git-resolve-when-done)))
+
+(defun vc-git-find-file-hook ()
+  (when (and buffer-file-name
+             (vc-git-buffer-has-conflict-markers-p))
+    (smerge-start-session)
+    (add-hook 'after-save-hook 'vc-git-resolve-when-done nil t)
+    (message "There are unresolved conflicts in this file")))
+
 (provide 'vc-git)
 
 ;;; vc-git.el ends here
