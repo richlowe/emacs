@@ -223,7 +223,7 @@ the associated section number."
 (defcustom Man-header-file-path
   (let ((arch (with-temp-buffer
                 (when (eq 0 (ignore-errors
-                              (call-process "gcc" nil '(t nil) nil
+                              (process-file "gcc" nil '(t nil) nil
                                             "-print-multiarch")))
                   (goto-char (point-min))
                   (buffer-substring (point) (line-end-position)))))
@@ -563,7 +563,12 @@ This is necessary if one wants to dump man.el with Emacs."
 	     (if Man-sed-script
 		 (concat "-e '" Man-sed-script "'")
 	       "")
-	     "-e '/^[\001-\032][\001-\032]*$/d'"
+             ;; The first entry below bombs when run remotely, because
+             ;; the octal escapes get expanded on the way through the
+             ;; pipe, so the characters are literal in the command
+             ;; line as executed.
+
+	     ;; "-e '/^[\001-\032][\001-\032]*$/d'"
 	     "-e '/\e[789]/s///g'"
 	     "-e '/Reformatting page.  Wait/d'"
 	     "-e '/Reformatting entry.  Wait/d'"
@@ -615,7 +620,7 @@ This is necessary if one wants to dump man.el with Emacs."
                           ;; Already has %s
                           ((string-match "%s" manual-program) "")
                           ;; Stock MS-DOS shells cannot redirect stderr;
-                          ;; `call-process' below sends it to /dev/null,
+                          ;; `process-file' below sends it to /dev/null,
                           ;; so we don't need `2>' even with DOS shells
                           ;; which do support stderr redirection.
                           ((not (fboundp 'start-process)) " %s")
@@ -700,7 +705,7 @@ a \"/\" as a local filename.  The function returns either `man-db'
                         default-directory
                         (expand-file-name "~/"))))
                 (ignore-errors
-                  (call-process manual-program nil t nil "--help")))
+                  (process-file manual-program nil t nil "--help")))
               (cond ((search-backward "--local-file" nil 'move)
                      'man-db)
                     ;; This feature seems to be present in at least ver 1.4f,
@@ -896,7 +901,7 @@ test/automated/man-tests.el in the emacs bzr repository."
             ;; here may not necessarily mean that we'll also get an
             ;; error later.
 	    (ignore-errors
-	      (call-process manual-program nil '(t nil) nil
+	      (process-file manual-program nil '(t nil) nil
 			    "-k" (concat (when (or Man-man-k-use-anchor
 						   (string-equal prefix ""))
 					   "^")
@@ -1012,9 +1017,7 @@ names or descriptions.  The pattern argument is usually an
 	(coding-system-for-read locale-coding-system)
 	;; Avoid possible error by using a directory that always exists.
 	(default-directory
-	  (if (and (file-directory-p default-directory)
-		   (not (find-file-name-handler default-directory
-						'file-directory-p)))
+	  (if (file-directory-p default-directory)
 	      default-directory
 	    "/")))
     ;; Prevent any attempt to use display terminal fanciness.
@@ -1063,9 +1066,9 @@ Return the buffer in which the manpage will appear."
 	(setq Man-original-frame (selected-frame))
 	(setq Man-arguments man-args))
       (Man-start-calling
-       (if (fboundp 'start-process)
+       (if (fboundp 'start-file-process)
 	    (set-process-sentinel
-	     (start-process manual-program buffer
+	     (start-file-process manual-program buffer
 			    (if (memq system-type '(cygwin windows-nt))
 				shell-file-name
 			      "sh")
@@ -1073,7 +1076,7 @@ Return the buffer in which the manpage will appear."
 			    (format (Man-build-man-command) man-args))
 	     'Man-bgproc-sentinel)
 	  (let ((exit-status
-		 (call-process shell-file-name nil (list buffer nil) nil
+		 (process-file shell-file-name nil (list buffer nil) nil
 			       shell-command-switch
 			       (format (Man-build-man-command) man-args)))
 		(msg ""))
@@ -1100,7 +1103,7 @@ Return the buffer in which the manpage will appear."
 	(buffer-read-only nil))
      (erase-buffer)
      (Man-start-calling
-      (call-process shell-file-name nil (list (current-buffer) nil) nil
+      (process-file shell-file-name nil (list (current-buffer) nil) nil
 		    shell-command-switch
 		    (format (Man-build-man-command) Man-arguments)))
      (if Man-fontify-manpage-flag
