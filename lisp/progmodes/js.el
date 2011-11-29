@@ -3421,9 +3421,10 @@ If one hasn't been set, or if it's stale, prompt for a new one."
   (setq-local which-func-imenu-joiner-function #'js--which-func-joiner)
 
   ;; Comments
-  (setq-local comment-start "// ")
-  (setq-local comment-end "")
-  (setq-local fill-paragraph-function 'js-c-fill-paragraph)
+  (set (make-local-variable 'comment-start) "// ")
+  (set (make-local-variable 'comment-end) "")
+  (set (make-local-variable 'fill-paragraph-function)
+       'js-c-fill-paragraph)
 
   ;; Parse cache
   (add-hook 'before-change-functions #'js--flush-caches t t)
