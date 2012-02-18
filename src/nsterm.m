@@ -140,6 +140,10 @@ extern NSString *NSMenuDidBeginTrackingNotification;
 
 @end
 
+static Lisp_Object Qns_system_sleep_hook;
+static Lisp_Object Qns_system_wake_hook;
+static Lisp_Object Qns_system_power_off_hook;
+
 /* ==========================================================================
 
     Local declarations
@@ -4403,8 +4407,20 @@ ns_term_init (Lisp_Object display_name)
       addObserver: mainMenu
          selector: @selector (trackingNotification:)
              name: NSMenuDidEndTrackingNotification object: mainMenu];
+
+    [[[NSWorkspace sharedWorkspace] notificationCenter] addObserver: NSApp
+            selector: @selector(willSleep:)
+            name: NSWorkspaceWillSleepNotification object: NULL];
+
+    [[[NSWorkspace sharedWorkspace] notificationCenter] addObserver: NSApp
+            selector: @selector(didWake:)
+            name: NSWorkspaceDidWakeNotification object: NULL];
+
+    [[[NSWorkspace sharedWorkspace] notificationCenter] addObserver: NSApp
+	    selector: @selector(willPowerOff:)
+	    name: NSWorkspaceWillPowerOffNotification object: NULL];
   }
-#endif /* MAC OS X menu setup */
+#endif /* MAC OS X setup */
 
   /* Register our external input/output types, used for determining
      applicable services and also drag/drop eligibility. */
@@ -4983,6 +4999,20 @@ not_in_argv (NSString *arg)
   return YES;
 }
 
+- (void)willSleep: (NSNotification *)note
+{
+    Frun_hooks(1, &Qns_system_sleep_hook);
+}
+
+- (void)didWake: (NSNotification *)note
+{
+    Frun_hooks(1, &Qns_system_wake_hook);
+}
+
+- (void)willPowerOff: (NSNotification *)note
+{
+    Frun_hooks(1, &Qns_system_power_off_hook);
+}
 
 @end  /* EmacsApp */
 
@@ -5974,7 +6004,6 @@ if (cols > 0 && rows > 0)
   maximizing_resize = NO;
 }
 #endif /* NS_IMPL_COCOA */
-
 
 - (void)windowDidBecomeKey: (NSNotification *)notification
 /* cf. x_detect_focus_change(), x_focus_changed(), x_new_focus_frame() */
@@ -7082,7 +7111,6 @@ if (cols > 0 && rows > 0)
   return frameRect;
 #undef FAKE_HEIGHT
 }
-
 @end /* EmacsWindow */
 
 
@@ -7726,6 +7754,21 @@ allowing it to be used at a lower level for accented character entry.");
                "Whether to confirm application quit using dialog.");
   ns_confirm_quit = Qnil;
 
+  DEFSYM (Qns_system_sleep_hook, "ns-system-sleep-hook");
+  DEFVAR_LISP ("ns-system-sleep-hook", ns_system_sleep_hook,
+    doc: /* Proper hook run when the system is about to go to sleep.*/);
+  ns_system_sleep_hook = Qnil;
+
+  DEFSYM (Qns_system_wake_hook, "ns-system-wake-hook");
+  DEFVAR_LISP ("ns-system-wake-hook", ns_system_wake_hook,
+    doc: /*Proper hook run when the system is about to wake up from sleep.*/);
+  ns_system_wake_hook = Qnil;
+
+  DEFSYM (Qns_system_power_off_hook, "ns-system-power-off-hook");
+  DEFVAR_LISP ("ns-system-power-off-hook", ns_system_power_off_hook,
+    doc: /* Proper hook run when the system is about to power off. */);
+  ns_system_power_off_hook = Qnil;
+  
   DEFVAR_LISP ("ns-auto-hide-menu-bar", ns_auto_hide_menu_bar,
                doc: /* Non-nil means that the menu bar is hidden, but appears when the mouse is near.
 Only works on OSX 10.6 or later.  */);
