@@ -782,6 +782,17 @@ Buffer local variable.")
    term-color-cyan
    term-color-white])
 
+(defvar ansi-term-bold-color-vector
+  [term-color-bold-default                     ;Ahem
+   term-color-bold-black
+   term-color-bold-red
+   term-color-bold-green
+   term-color-bold-yellow
+   term-color-bold-blue
+   term-color-bold-magenta
+   term-color-bold-cyan
+   term-color-bold-white])
+
 (defcustom term-default-fg-color nil
   "If non-nil, default color for foreground in Term mode."
   :group 'term
@@ -853,6 +864,54 @@ Buffer local variable.")
   '((t :foreground "white" :background "white"))
   "Face used to render white color code."
   :group 'term)
+
+(defface term-color-bold-default
+  '((t :foreground "white" :background "white"))
+  "Face used to render black color code."
+  :group 'term)
+
+(defface term-color-bold-black
+  '((t :foreground "black" :background "black"))
+  "Face used to render black color code."
+  :group 'term)
+
+(defface term-color-bold-red
+  '((t :foreground "red3" :background "red3"))
+  "Face used to render red color code."
+  :group 'term)
+
+(defface term-color-bold-green
+  '((t :foreground "green3" :background "green3"))
+  "Face used to render green color code."
+  :group 'term)
+
+(defface term-color-bold-yellow
+  '((t :foreground "yellow3" :background "yellow3"))
+  "Face used to render yellow color code."
+  :group 'term)
+
+(defface term-color-bold-blue
+  '((t :foreground "blue2" :background "blue2"))
+  "Face used to render blue color code."
+  :group 'term)
+
+(defface term-color-bold-magenta
+  '((t :foreground "magenta3" :background "magenta3"))
+  "Face used to render magenta color code."
+  :group 'term)
+
+(defface term-color-bold-cyan
+  '((t :foreground "cyan3" :background "cyan3"))
+  "Face used to render cyan color code."
+  :group 'term)
+
+(defface term-color-bold-white
+  '((t :foreground "white" :background "white"))
+  "Face used to render white color code."
+  :group 'term)
+
+(defcustom term-use-face-as-bold nil
+  "Use separate face to represent bold colors.")
 
 ;; Inspiration came from comint.el -mm
 (defcustom term-buffer-maximum-size 2048
@@ -966,7 +1025,7 @@ is buffer-local."
   ;; we should undo this binding.
   (define-key term-raw-escape-map term-escape-char 'term-send-raw))
 
-(term-set-escape-char (or term-escape-char ?\C-c))
+(term-set-escape-char (or term-escape-char "\C-c"))
 
 (defvar overflow-newline-into-fringe)
 
@@ -3256,8 +3315,22 @@ See `term-prompt-regexp'."
                   :inverse-video term-ansi-current-reverse))
 
       (when term-ansi-current-bold
-        (setq term-current-face
-              `(,term-current-face :inherit term-bold)))
+        (cond (term-use-face-as-bold
+               (setq term-current-face
+                     (list :foreground
+                           (face-foreground
+                            (elt ansi-term-bold-color-vector
+                                 term-ansi-current-color)
+                            nil 'default)
+                           :background
+                           (face-background
+                            (elt ansi-term-bold-color-vector
+                                 term-ansi-current-bg-color)
+                            nil 'default)
+                           :inverse-video term-ansi-current-reverse)))
+              (t
+               (setq term-current-face
+                     `(,term-current-face :inherit term-bold)))))
 
       (when term-ansi-current-underline
         (setq term-current-face
