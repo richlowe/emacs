@@ -529,7 +529,7 @@ or an empty string if none."
               'keymap vc-git-stash-map
               'vc-git-stash (replace-regexp-in-string "^ *\\({[0-9]+}\\).*" "\\1" stash)))
 
-(defun vc-git-dir-extra-headers (dir)
+(defun vc-git-dir-extra-headers (_dir)
   (let ((str (with-output-to-string
                (with-current-buffer standard-output
                  (vc-git--out-ok "symbolic-ref" "HEAD"))))
@@ -568,9 +568,9 @@ or an empty string if none."
 		    'face 'vc-dir-header-value-face)))
      "\n"
      ;; For now just a heading, key bindings can be added later for various bisect actions
-     (when (file-exists-p (expand-file-name ".git/BISECT_START" (vc-git-root dir)))
+     (when (file-exists-p (expand-file-name ".git/BISECT_START" (vc-git-root _dir)))
        (propertize  "Bisect     : in progress\n" 'face 'font-lock-warning-face))
-     (when (file-exists-p (expand-file-name ".git/rebase-apply" (vc-git-root dir)))
+     (when (file-exists-p (expand-file-name ".git/rebase-apply" (vc-git-root _dir)))
        (propertize  "Rebase     : in progress\n" 'face 'font-lock-warning-face))
      (if stash
        (concat
