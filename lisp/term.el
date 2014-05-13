@@ -1025,7 +1025,7 @@ is buffer-local."
   ;; we should undo this binding.
   (define-key term-raw-escape-map term-escape-char 'term-send-raw))
 
-(term-set-escape-char (or term-escape-char "\C-c"))
+(term-set-escape-char (or term-escape-char ?\C-c))
 
 (defvar overflow-newline-into-fringe)
 
