@@ -6484,6 +6484,7 @@ All windows are opened in the current frame."
    (s421   . "%c: Unknown command")
    (s431   . "No nickname given")
    (s432   . "%n is an erroneous nickname")
+   (s441   . "%n is not on this channel")
    (s442   . "%c: You're not on that channel")
    (s445   . "SUMMON has been disabled")
    (s446   . "USERS has been disabled")

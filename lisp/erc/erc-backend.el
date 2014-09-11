@@ -1921,6 +1921,11 @@ See `erc-display-server-message'." nil
     (unless (erc-channel-p nick/channel)
       (erc-nickname-in-use nick/channel "temporarily unavailable"))))
 
+(define-erc-response-handler (441)      ;Kicking a user who isn't present
+  "Not on channel." nil
+  (erc-display-message parsed '(notice error) 'active 's441
+                       ?n (cadr (erc-response.command-args parsed))))
+
 (define-erc-response-handler (442)
   "Not on channel." nil
   (erc-display-message parsed '(notice error) 'active 's442
@@ -2014,7 +2019,7 @@ See `erc-display-error-notice'." nil
 ;;                               200 201 202 203 204 205 206 208 209 211 212 213
 ;;                               214 215 216 217 218 219 241 242 243 244 249 261
 ;;                               262 302 342 351 402 407 409 411 413 414 415
-;;                               423 424 436 441 443 444 467 471 472 473 KILL)
+;;                               423 424 436 443 444 467 471 472 473 KILL)
 ;;   nil nil
 ;;   (ignore proc parsed))
 
