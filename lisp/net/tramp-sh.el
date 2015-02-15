@@ -457,7 +457,7 @@ as given in your `~/.profile'."
     ,(format "TERM=%s" tramp-terminal-type)
     "EMACS=t" ;; Deprecated.
     ,(format "INSIDE_EMACS='%s,tramp:%s'" emacs-version tramp-version)
-    "CDPATH=" "HISTORY=" "MAIL=" "MAILCHECK=" "MAILPATH=" "PAGER="
+    "CDPATH=" "HISTORY=" "MAIL=" "MAILCHECK=" "MAILPATH=" "PAGER=\"\""
     "autocorrect=" "correct=")
   "List of environment variables to be set on the remote host.
 
@@ -4090,7 +4090,7 @@ process to set up.  VEC specifies the connection."
     (while env
       (setq item (tramp-compat-split-string (car env) "="))
       (setcdr item (mapconcat 'identity (cdr item) "="))
-      (if (and (stringp (cdr item)))
+      (if (and (stringp (cdr item)) (not (string-equal (cdr item) "")))
 	  (push (format "%s %s" (car item) (cdr item)) vars)
 	(push (car item) unset))
       (setq env (cdr env)))
