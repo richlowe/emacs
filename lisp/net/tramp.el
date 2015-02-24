@@ -3053,7 +3053,13 @@ User is always nil."
 		  (symbol-value 'tramp-bkup-backup-directory-info))
 	       (symbol-value 'bkup-backup-directory-info)))))
 
-      (tramp-run-real-handler 'find-backup-file-name (list filename)))))
+      ;; XXX: Doing this twice, once to determine which file name to use, is a bit crap.
+      (let ((default-name (tramp-run-real-handler 'find-backup-file-name
+                                                  (list filename))))
+        (tramp-run-real-handler 'find-backup-file-name
+                                (list (if (file-remote-p (car default-name))
+                                          localname
+                                        default-name)))))))
 
 (defun tramp-handle-insert-directory
   (filename switches &optional wildcard full-directory-p)
