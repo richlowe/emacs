@@ -624,7 +624,7 @@ This is necessary if one wants to dump man.el with Emacs."
                           ;; `process-file' below sends it to /dev/null,
                           ;; so we don't need `2>' even with DOS shells
                           ;; which do support stderr redirection.
-                          ((not (fboundp 'start-process)) " %s")
+                          ((not (fboundp 'make-process)) " %s")
                           ((concat " %s 2>" null-device)))))
 	(flist Man-filter-list))
     (while (and flist (car flist))
@@ -969,7 +969,7 @@ otherwise look like a page name.
 
 An \"apropos\" query with -k gives a buffer of matching page
 names or descriptions.  The pattern argument is usually an
-\"egrep\" style regexp.
+\"grep -E\" style regexp.
 
     -k pattern"
 
@@ -1083,7 +1083,7 @@ Return the buffer in which the manpage will appear."
 					"[cleaning...]")
 				      'face 'mode-line-emphasis)))
 	(Man-start-calling
-	 (if (fboundp 'start-process)
+	 (if (fboundp 'make-process)
 	     (let ((proc (start-process
 			  manual-program buffer
 			  (if (memq system-type '(cygwin windows-nt))
