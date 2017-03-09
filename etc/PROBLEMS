@@ -1,6 +1,6 @@
 Known Problems with GNU Emacs
 
-Copyright (C) 1987-1989, 1993-1999, 2001-2016 Free Software Foundation,
+Copyright (C) 1987-1989, 1993-1999, 2001-2017 Free Software Foundation,
 Inc.
 See the end of the file for license conditions.
 
@@ -770,6 +770,10 @@ as small rectangles containing a hexadecimal code inside.
 The solution is to install the appropriate fonts on your machine. For
 instance if you are editing a text with a lot of math symbols, then
 installing a font like 'Symbola' should solve this problem.
+
+Another reason for slow display is reportedly the nerd-fonts
+installation, even when Symbola is installed as well.  Uninstalling
+nerd-fonts was reported to solve the problem in that case.
 
 * Internationalization problems
 

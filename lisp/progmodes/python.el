@@ -1,6 +1,6 @@
 ;;; python.el --- Python's flying circus support for Emacs -*- lexical-binding: t -*-
 
-;; Copyright (C) 2003-2016 Free Software Foundation, Inc.
+;; Copyright (C) 2003-2017 Free Software Foundation, Inc.
 
 ;; Author: Fabián E. Gallina <fgallina@gnu.org>
 ;; URL: https://github.com/fgallina/python.el
@@ -2826,8 +2826,7 @@ of `error' with a user-friendly message."
   (or (python-shell-get-process)
       (if interactivep
           (user-error
-           "Start a Python process first with `%s' or `%s'."
-           (substitute-command-keys "\\[run-python]")
+           "Start a Python process first with `M-x run-python' or `%s'."
            ;; Get the binding.
            (key-description
             (where-is-internal
@@ -3256,8 +3255,10 @@ the full statement in the case of imports."
   "Completion string code must work for (i)pdb.")
 
 (defcustom python-shell-completion-native-disabled-interpreters
-  ;; PyPy's readline cannot handle some escape sequences yet.
-  (list "pypy")
+  ;; PyPy's readline cannot handle some escape sequences yet.  Native
+  ;; completion was found to be non-functional for IPython (see
+  ;; Bug#25067).
+  (list "pypy" "ipython")
   "List of disabled interpreters.
 When a match is found, native completion is disabled."
   :version "25.1"
