@@ -1,6 +1,6 @@
 /* emacs-module.c - Module loading and runtime implementation
 
-Copyright (C) 2015-2017 Free Software Foundation, Inc.
+Copyright (C) 2015-2018 Free Software Foundation, Inc.
 
 This file is part of GNU Emacs.
 
@@ -574,7 +574,7 @@ module_make_string (emacs_env *env, const char *str, ptrdiff_t length)
   if (! (0 <= length && length <= STRING_BYTES_BOUND))
     xsignal0 (Qoverflow_error);
   /* FIXME: AUTO_STRING_WITH_LEN requires STR to be null-terminated,
-     but we shouldn’t require that.  */
+     but we shouldn't require that.  */
   AUTO_STRING_WITH_LEN (lstr, str, length);
   return lisp_to_value (env,
                         code_convert_string_norecord (lstr, Qutf_8, false));
@@ -998,10 +998,6 @@ lisp_to_value_bits (Lisp_Object o)
   return (emacs_value) p;
 }
 
-#ifndef HAVE_STRUCT_ATTRIBUTE_ALIGNED
-enum { HAVE_STRUCT_ATTRIBUTE_ALIGNED = 0 };
-#endif
-
 /* Convert O to an emacs_value.  Allocate storage if needed; this can
    signal if memory is exhausted.  Must be an injective function.  */
 static emacs_value
@@ -1029,19 +1025,6 @@ lisp_to_value (emacs_env *env, Lisp_Object o)
       /* Package the incompressible object pointer inside a pair
 	 that is compressible.  */
       Lisp_Object pair = Fcons (o, ltv_mark);
-
-      if (! HAVE_STRUCT_ATTRIBUTE_ALIGNED)
-	{
-	  /* Keep calling Fcons until it returns a compressible pair.
-	     This shouldn't take long.  */
-	  while ((intptr_t) XCONS (pair) & (GCALIGNMENT - 1))
-	    pair = Fcons (o, pair);
-
-	  /* Plant the mark.  The garbage collector will eventually
-	     reclaim any just-allocated incompressible pairs.  */
-	  XSETCDR (pair, ltv_mark);
-	}
-
       v = (emacs_value) ((intptr_t) XCONS (pair) + Lisp_Cons);
     }
 

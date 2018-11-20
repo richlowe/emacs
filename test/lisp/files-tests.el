@@ -1,6 +1,6 @@
 ;;; files-tests.el --- tests for files.el.  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2012-2017 Free Software Foundation, Inc.
+;; Copyright (C) 2012-2018 Free Software Foundation, Inc.
 
 ;; This file is part of GNU Emacs.
 
@@ -135,18 +135,16 @@ form.")
 
 (ert-deftest files-test-local-variables ()
   "Test the file-local variables implementation."
-  (unwind-protect
-      (progn
-	(defadvice hack-local-variables-confirm (around files-test activate)
-	  (setq files-test-result 'query)
-	  nil)
-	(dolist (test files-test-local-variable-data)
-	  (let ((str (concat "text\n\n;; Local Variables:\n;; "
-			     (mapconcat 'identity (car test) "\n;; ")
-			     "\n;; End:\n")))
-	    (dolist (subtest (cdr test))
-	      (should (file-test--do-local-variables-test str subtest))))))
-    (ad-disable-advice 'hack-local-variables-confirm 'around 'files-test)))
+  (cl-letf (((symbol-function 'hack-local-variables-confirm)
+             (lambda (&rest _)
+               (setq files-test-result 'query)
+               nil)))
+    (dolist (test files-test-local-variable-data)
+      (let ((str (concat "text\n\n;; Local Variables:\n;; "
+                         (mapconcat 'identity (car test) "\n;; ")
+                         "\n;; End:\n")))
+        (dolist (subtest (cdr test))
+          (should (file-test--do-local-variables-test str subtest)))))))
 
 (defvar files-test-bug-18141-file
   (expand-file-name "data/files-bug18141.el.gz" (getenv "EMACS_TEST_DIRECTORY"))
@@ -410,6 +408,20 @@ name (Bug#28412)."
     (copy-directory source2 dest2)
     (should (file-directory-p (concat (file-name-as-directory dest2) "a")))
     (delete-directory dir 'recursive)))
+
+(ert-deftest files-test-abbreviated-home-dir ()
+  "Test that changing HOME does not confuse `abbreviate-file-name'.
+See <https://debbugs.gnu.org/19657#20>."
+  (let* ((homedir temporary-file-directory)
+         (process-environment (cons (format "HOME=%s" homedir)
+                                    process-environment))
+         (abbreviated-home-dir nil)
+         (testfile (expand-file-name "foo" homedir))
+         (old (file-truename (abbreviate-file-name testfile)))
+         (process-environment (cons (format "HOME=%s"
+                                            (expand-file-name "bar" homedir))
+                                    process-environment)))
+    (should (equal old (file-truename (abbreviate-file-name testfile))))))
 
 (provide 'files-tests)
 ;;; files-tests.el ends here

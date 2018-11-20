@@ -1,6 +1,6 @@
 ;;; ewoc.el --- utility to maintain a view of a list of objects in a buffer  -*- lexical-binding: t -*-
 
-;; Copyright (C) 1991-2017 Free Software Foundation, Inc.
+;; Copyright (C) 1991-2018 Free Software Foundation, Inc.
 
 ;; Author: Per Cederqvist <ceder@lysator.liu.se>
 ;;	Inge Wallin <inge@lysator.liu.se>
@@ -411,7 +411,7 @@ If the EWOC is empty, nil is returned."
      ((>= pos (ewoc--node-start-marker (ewoc--node-nth dll -2)))
       (ewoc--node-nth dll -2))
 
-     ;; We now know that pos is within a elem.
+     ;; We now know that pos is within an elem.
      (t
       ;; Make an educated guess about which of the three known
       ;; node'es (the first, the last, or GUESS) is nearest.

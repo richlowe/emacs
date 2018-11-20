@@ -1,6 +1,6 @@
 ;;; lread-tests.el --- tests for lread.c -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2016-2017 Free Software Foundation, Inc.
+;; Copyright (C) 2016-2018 Free Software Foundation, Inc.
 
 ;; Author: Philipp Stephani <phst@google.com>
 
@@ -142,23 +142,6 @@ literals (Bug#20852)."
                            "unescaped character literals "
                            "`?\"', `?(', `?)', `?;', `?[', `?]' detected!")))))
 
-(ert-deftest lread-tests--funny-quote-symbols ()
-  "Check that 'smart quotes' or similar trigger errors in symbol names."
-  (dolist (quote-char
-           '(#x2018 ;; LEFT SINGLE QUOTATION MARK
-             #x2019 ;; RIGHT SINGLE QUOTATION MARK
-             #x201B ;; SINGLE HIGH-REVERSED-9 QUOTATION MARK
-             #x201C ;; LEFT DOUBLE QUOTATION MARK
-             #x201D ;; RIGHT DOUBLE QUOTATION MARK
-             #x201F ;; DOUBLE HIGH-REVERSED-9 QUOTATION MARK
-             #x301E ;; DOUBLE PRIME QUOTATION MARK
-             #xFF02 ;; FULLWIDTH QUOTATION MARK
-             #xFF07 ;; FULLWIDTH APOSTROPHE
-             ))
-    (let ((str (format "%cfoo" quote-char)))
-     (should-error (read str) :type 'invalid-read-syntax)
-     (should (eq (read (concat "\\" str)) (intern str))))))
-
 (ert-deftest lread-test-bug26837 ()
   "Test for https://debbugs.gnu.org/26837 ."
   (let ((load-path (cons
@@ -186,5 +169,13 @@ literals (Bug#20852)."
     (setcar x x)
     (lread--substitute-object-in-subtree x 1 t)
     (should (eq x (cdr x)))))
+
+(ert-deftest lread-test-bug-31186 ()
+  (with-temp-buffer
+    (insert ";; -*- -:*-")
+    (should-not
+     ;; This used to crash in lisp_file_lexically_bound_p before the
+     ;; bug was fixed.
+     (eval-buffer))))
 
 ;;; lread-tests.el ends here

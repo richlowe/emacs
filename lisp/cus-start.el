@@ -1,6 +1,6 @@
 ;;; cus-start.el --- define customization properties of builtins  -*- lexical-binding:t -*-
 
-;; Copyright (C) 1997, 1999-2017 Free Software Foundation, Inc.
+;; Copyright (C) 1997, 1999-2018 Free Software Foundation, Inc.
 
 ;; Author: Per Abrahamsen <abraham@dina.kvl.dk>
 ;; Keywords: internal
@@ -277,9 +277,10 @@ Leaving \"Default\" unchecked is equivalent with specifying a default of
 		     ((eq system-type 'darwin)
 		      (or (getenv "TMPDIR") (getenv "TMP") (getenv "TEMP")
 			  ;; See bug#7135.
-			  (let ((tmp (ignore-errors
-				       (shell-command-to-string
-					"getconf DARWIN_USER_TEMP_DIR"))))
+			  (let* (file-name-handler-alist
+				 (tmp (ignore-errors
+				        (shell-command-to-string
+					 "getconf DARWIN_USER_TEMP_DIR"))))
 			    (and (stringp tmp)
 				 (setq tmp (replace-regexp-in-string
 					    "\n\\'" "" tmp))

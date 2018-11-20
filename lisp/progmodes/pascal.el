@@ -1,6 +1,6 @@
 ;;; pascal.el --- major mode for editing pascal source in Emacs -*- lexical-binding: t -*-
 
-;; Copyright (C) 1993-2017 Free Software Foundation, Inc.
+;; Copyright (C) 1993-2018 Free Software Foundation, Inc.
 
 ;; Author: Espen Skoglund <esk@gnu.org>
 ;; Keywords: languages
@@ -1425,7 +1425,7 @@ Pascal Outline mode provides some additional commands.
 \\[pascal-show-all]\t- Show the whole buffer.
 \\[pascal-hide-other-defuns]\
 \t- Hide everything but the current function (function under the cursor).
-\\[pascal-outline]\t- Leave Pascal Outline mode."
+\\[pascal-outline-mode]\t- Leave Pascal Outline mode."
   :init-value nil :lighter " Outl" :keymap pascal-outline-map
   (add-to-invisibility-spec '(pascal . t))
   (unless pascal-outline-mode

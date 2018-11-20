@@ -1,6 +1,6 @@
 ;;; css-mode-tests.el --- Test suite for CSS mode  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2016-2017 Free Software Foundation, Inc.
+;; Copyright (C) 2016-2018 Free Software Foundation, Inc.
 
 ;; Author: Simen Heggestøyl <simenheg@gmail.com>
 ;; Keywords: internal
@@ -58,7 +58,7 @@
 
   ;; Check that the `color' property doesn't cause infinite recursion
   ;; because it refers to the value class of the same name.
-  (should (= (length (css--property-values "color")) 152)))
+  (should (= (length (css--property-values "color")) 154)))
 
 (ert-deftest css-test-property-value-cache ()
   "Test that `css--property-value-cache' is in use."
@@ -294,6 +294,12 @@
       (save-excursion
         (insert input ")"))
       (should (equal (css--hsl-color) "#ff0000")))))
+
+(ert-deftest css-test-hex-color ()
+  (should (equal (css--hex-color "#abc") "#abc"))
+  (should (equal (css--hex-color "#abcd") "#abc"))
+  (should (equal (css--hex-color "#aabbcc") "#aabbcc"))
+  (should (equal (css--hex-color "#aabbccdd") "#aabbcc")))
 
 (ert-deftest css-test-named-color ()
   (dolist (text '("@mixin black" "@include black"))

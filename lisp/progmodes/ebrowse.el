@@ -1,6 +1,6 @@
 ;;; ebrowse.el --- Emacs C++ class browser & tags facility
 
-;; Copyright (C) 1992-2017 Free Software Foundation, Inc.
+;; Copyright (C) 1992-2018 Free Software Foundation, Inc.
 
 ;; Author: Gerd Moellmann <gerd@gnu.org>
 ;; Maintainer: emacs-devel@gnu.org
@@ -457,7 +457,7 @@ members."
 
 
 (defsubst ebrowse-extern-c-p (member)
-  "Value is non-nil if MEMBER.is `extern \"C\"'."
+  "Value is non-nil if MEMBER is `extern \"C\"'."
   (ebrowse-member-bit-set-p member 256))
 
 
@@ -3034,7 +3034,7 @@ the first derived class."
      :help "Show the base class of this class"
      :active t]
     ["Down" ebrowse-switch-member-buffer-to-derived-class
-     :help "Show a derived class class of this class"
+     :help "Show a derived class of this class"
      :active t]
     ["Next Sibling" ebrowse-switch-member-buffer-to-next-sibling-class
      :help "Show the next sibling class"

@@ -1,6 +1,6 @@
 ;;; css-mode.el --- Major mode to edit CSS files  -*- lexical-binding: t -*-
 
-;; Copyright (C) 2006-2017 Free Software Foundation, Inc.
+;; Copyright (C) 2006-2018 Free Software Foundation, Inc.
 
 ;; Author: Stefan Monnier <monnier@iro.umontreal.ca>
 ;; Maintainer: Simen Heggestøyl <simenheg@gmail.com>
@@ -498,6 +498,7 @@ further value candidates, since that list would be infinite.")
     ("red" . "#ff0000")
     ("purple" . "#800080")
     ("fuchsia" . "#ff00ff")
+    ("magenta" . "#ff00ff")
     ("green" . "#008000")
     ("lime" . "#00ff00")
     ("olive" . "#808000")
@@ -506,6 +507,7 @@ further value candidates, since that list would be infinite.")
     ("blue" . "#0000ff")
     ("teal" . "#008080")
     ("aqua" . "#00ffff")
+    ("cyan" . "#00ffff")
     ("orange" . "#ffa500")
     ("aliceblue" . "#f0f8ff")
     ("antiquewhite" . "#faebd7")
@@ -1037,7 +1039,7 @@ This recognizes CSS-color-4 extensions."
 STR is the incoming CSS hex color.
 This function simply drops any transparency."
   ;; Either #RGB or #RRGGBB, drop the "A" or "AA".
-  (if (> (length str) 4)
+  (if (> (length str) 5)
       (substring str 0 7)
     (substring str 0 4)))
 
@@ -1149,7 +1151,7 @@ This function is intended to be good enough to help SMIE during
 tokenization, but should not be regarded as a reliable function
 for determining whether point is within a selector."
   (save-excursion
-    (re-search-forward "[{};)]" nil t)
+    (re-search-forward "[{};]" nil t)
     (eq (char-before) ?\{)))
 
 (defun css--colon-inside-funcall ()
@@ -1375,6 +1377,7 @@ tags, classes and IDs."
               :exit-function
               ,(lambda (string status)
                  (and (eq status 'finished)
+                      (eolp)
                       prop-table
                       (test-completion string prop-table)
                       (not (and sel-table

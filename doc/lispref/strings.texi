@@ -1,6 +1,6 @@
 @c -*- mode: texinfo; coding: utf-8 -*-
 @c This is part of the GNU Emacs Lisp Reference Manual.
-@c Copyright (C) 1990-1995, 1998-1999, 2001-2017 Free Software
+@c Copyright (C) 1990-1995, 1998-1999, 2001-2018 Free Software
 @c Foundation, Inc.
 @c See the file elisp.texi for copying conditions.
 @node Strings and Characters
@@ -720,7 +720,7 @@ minus sign if the argument is negative.
      @result{} "-23.5"
 @end example
 
-@cindex int-to-string
+@cindex @code{int-to-string}
 @code{int-to-string} is a semi-obsolete alias for this function.
 
 See also the function @code{format} in @ref{Formatting Strings}.
@@ -920,7 +920,7 @@ floating-point number.
 @item %g
 Replace the specification with notation for a floating-point number,
 using either exponential notation or decimal-point notation.  The
-exponential notation is used if the exponent would be less than -4 or
+exponential notation is used if the exponent would be less than @minus{}4 or
 greater than or equal to the precision (default: 6).  By default,
 trailing zeros are removed from the fractional portion of the result
 and a decimal-point character appears only if it is followed by a
@@ -1197,6 +1197,7 @@ a character, functions are unable to perform proper substitution and
 result may differ compared to treating a one-character string.  For
 example:
 
+@ifnottex
 @example
 @group
 (upcase "ﬁ")  ; note: single character, ligature "fi"
@@ -1207,6 +1208,19 @@ example:
      @result{} 64257  ; i.e. ?ﬁ
 @end group
 @end example
+@end ifnottex
+@iftex
+@example
+@group
+(upcase "@r{fi}")  ; note: single character, ligature "fi"
+     @result{} "FI"
+@end group
+@group
+(upcase ?@r{fi})
+     @result{} 64257  ; i.e. ?@r{fi}
+@end group
+@end example
+@end iftex
 
   To avoid this, a character must first be converted into a string,
 using @code{string} function, before being passed to one of the casing

@@ -1,6 +1,6 @@
 /* Basic character support.
 
-Copyright (C) 2001-2017 Free Software Foundation, Inc.
+Copyright (C) 2001-2018 Free Software Foundation, Inc.
 Copyright (C) 1995, 1997, 1998, 2001 Electrotechnical Laboratory, JAPAN.
   Licensed to the Free Software Foundation.
 Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011
@@ -983,7 +983,7 @@ alphabeticp (int c)
 	  || gen_cat == UNICODE_CATEGORY_Nl);
 }
 
-/* Return true if C is a alphabetic or decimal-number character.  */
+/* Return true if C is an alphabetic or decimal-number character.  */
 bool
 alphanumericp (int c)
 {

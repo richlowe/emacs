@@ -1,6 +1,6 @@
 @c -*- mode: texinfo; coding: utf-8 -*-
 @c This is part of the GNU Emacs Lisp Reference Manual.
-@c Copyright (C) 1990-1995, 1998-1999, 2001-2017 Free Software
+@c Copyright (C) 1990-1995, 1998-1999, 2001-2018 Free Software
 @c Foundation, Inc.
 @c See the file elisp.texi for copying conditions.
 @node Control Structures
@@ -317,7 +317,8 @@ list of the form @code{(@var{pattern} @var{body-forms}@dots{})}.
 @var{pattern} of each clause, in textual order.  If the value matches,
 the clause succeeds; @code{pcase} then evaluates its @var{body-forms},
 and returns the value of the last of @var{body-forms}.  Any remaining
-@var{clauses} are ignored.
+@var{clauses} are ignored.  If no clauses match, then the @code{pcase}
+form evaluates to @code{nil}.
 
 The @var{pattern} part of a clause can be of one of two types:
 @dfn{QPattern}, a pattern quoted with a backquote; or a
