@@ -1,6 +1,6 @@
 /* Display generation from window structure and buffer text.
 
-Copyright (C) 1985-1988, 1993-1995, 1997-2018 Free Software Foundation,
+Copyright (C) 1985-1988, 1993-1995, 1997-2019 Free Software Foundation,
 Inc.
 
 This file is part of GNU Emacs.
@@ -21185,7 +21185,10 @@ maybe_produce_line_number (struct it *it)
       if (lnum_face_id != current_lnum_face_id
 	  && (EQ (Vdisplay_line_numbers, Qvisual)
 	      ? this_line == 0
-	      : this_line == it->pt_lnum))
+	      : this_line == it->pt_lnum)
+	  /* Avoid displaying the line-number-current-line face on
+	     empty lines beyond EOB.  */
+	  && it->what != IT_EOB)
 	tem_it.face_id = current_lnum_face_id;
       else
 	tem_it.face_id = lnum_face_id;
@@ -25616,22 +25619,28 @@ dump_glyph_string (struct glyph_string *s)
    face-override for drawing S.  */
 
 #ifdef HAVE_NTGUI
-#define OPTIONAL_HDC(hdc)  HDC hdc,
-#define DECLARE_HDC(hdc)   HDC hdc;
-#define ALLOCATE_HDC(hdc, f) hdc = get_frame_dc ((f))
-#define RELEASE_HDC(hdc, f)  release_frame_dc ((f), (hdc))
-#endif
-
-#ifndef OPTIONAL_HDC
-#define OPTIONAL_HDC(hdc)
-#define DECLARE_HDC(hdc)
-#define ALLOCATE_HDC(hdc, f)
-#define RELEASE_HDC(hdc, f)
+/* We set inhibit-quit here due to paranoia: get_frame_dc acquires the
+   critical section, and we cannot QUIT while we hold the critical
+   section.  If any of the code run by callers of ALLOCATE_HDC happens
+   to call Lisp (might be possible due to all the hooks lying around),
+   we must prevent it from quitting.  */
+# define ALLOCATE_HDC(hdc, f)			\
+  Lisp_Object prev_quit = Vinhibit_quit;	\
+  Vinhibit_quit = Qt;				\
+  HDC hdc = get_frame_dc ((f))
+# define RELEASE_HDC(hdc, f)			\
+  release_frame_dc ((f), (hdc));		\
+  Vinhibit_quit = prev_quit
+#else
+# define ALLOCATE_HDC(hdc, f)
+# define RELEASE_HDC(hdc, f)
 #endif
 
 static void
 init_glyph_string (struct glyph_string *s,
-		   OPTIONAL_HDC (hdc)
+#ifdef HAVE_NTGUI
+		   HDC hdc,
+#endif
 		   XChar2b *char2b, struct window *w, struct glyph_row *row,
 		   enum glyph_row_area area, int start, enum draw_glyphs_face hl)
 {
@@ -26671,7 +26680,6 @@ draw_glyphs (struct window *w, int x, struct glyph_row *row,
   struct glyph_string *clip_head = NULL, *clip_tail = NULL;
   int i, j, x_reached, last_x, area_left = 0;
   struct frame *f = XFRAME (WINDOW_FRAME (w));
-  DECLARE_HDC (hdc);
 
   ALLOCATE_HDC (hdc, f);
 
@@ -32286,7 +32294,6 @@ expose_frame (struct frame *f, int x, int y, int w, int h)
 
   TRACE ((stderr, "expose_frame "));
 
-  /* No need to redraw if frame will be redrawn soon.  */
   if (FRAME_GARBAGED_P (f))
     {
       TRACE ((stderr, " garbaged\n"));

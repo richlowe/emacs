@@ -1,6 +1,6 @@
 ;;; dired.el --- directory-browsing commands -*- lexical-binding: t -*-
 
-;; Copyright (C) 1985-1986, 1992-1997, 2000-2018 Free Software
+;; Copyright (C) 1985-1986, 1992-1997, 2000-2019 Free Software
 ;; Foundation, Inc.
 
 ;; Author: Sebastian Kremer <sk@thp.uni-koeln.de>
@@ -1694,7 +1694,7 @@ Do so according to the former subdir alist OLD-SUBDIR-ALIST."
 
     ;; Make menu bar items.
 
-    ;; No need to fo this, now that top-level items are fewer.
+    ;; No need to do this, now that top-level items are fewer.
     ;;;;
     ;; Get rid of the Edit menu bar item to save space.
     ;(define-key map [menu-bar edit] 'undefined)

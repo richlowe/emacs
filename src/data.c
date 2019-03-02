@@ -1,5 +1,5 @@
 /* Primitive operations on Lisp data types for GNU Emacs Lisp interpreter.
-   Copyright (C) 1985-1986, 1988, 1993-1995, 1997-2018 Free Software
+   Copyright (C) 1985-1986, 1988, 1993-1995, 1997-2019 Free Software
    Foundation, Inc.
 
 This file is part of GNU Emacs.
@@ -1954,6 +1954,16 @@ Instead, use `add-hook' and specify t for the LOCAL argument.  */)
 	(current_buffer,
 	 Fcons (Fcons (variable, XCDR (blv->defcell)),
 		BVAR (current_buffer, local_var_alist)));
+
+      /* If the symbol forwards into a C variable, then load the binding
+         for this buffer now, to preserve the invariant that forwarded
+         variables must always hold the value corresponding to the
+         current buffer (they are swapped eagerly).
+         Otherwise, if C code modifies the variable before we load the
+         binding in, then that new value would clobber the default binding
+         the next time we unload it.  See bug#34318.  */
+      if (blv->fwd)
+        swap_in_symval_forwarding (sym, blv);
     }
 
   return variable;

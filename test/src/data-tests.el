@@ -1,6 +1,6 @@
 ;;; data-tests.el --- tests for src/data.c  -*- lexical-binding:t -*-
 
-;; Copyright (C) 2013-2018 Free Software Foundation, Inc.
+;; Copyright (C) 2013-2019 Free Software Foundation, Inc.
 
 ;; This file is part of GNU Emacs.
 
@@ -507,5 +507,23 @@ comparing the subr with a much slower lisp implementation."
       (should (not (or (bound-and-true-p data-tests-foo1)
                        (bound-and-true-p data-tests-foo2)
                        (bound-and-true-p data-tests-foo3)))))))
+
+(ert-deftest data-tests-make-local-forwarded-var () ;bug#34318
+  ;; Boy, this bug is tricky to trigger.  You need to:
+  ;; - call make-local-variable on a forwarded var (i.e. one that
+  ;;   has a corresponding C var linked via DEFVAR_(LISP|INT|BOOL))
+  ;; - cause the C code to modify this variable from the C side of the
+  ;;   forwarding, but this needs to happen before the var is accessed
+  ;;   from the Lisp side and before we switch to another buffer.
+  ;; The trigger in bug#34318 doesn't exist any more because the C code has
+  ;; changes.  Instead I found the trigger below.
+  (with-temp-buffer
+    (setq last-coding-system-used 'bug34318)
+    (make-local-variable 'last-coding-system-used)
+    ;; This should set last-coding-system-used to `no-conversion'.
+    (decode-coding-string "hello" nil)
+    (should (equal (list last-coding-system-used
+                         (default-value 'last-coding-system-used))
+                   '(no-conversion bug34318)))))
 
 ;;; data-tests.el ends here

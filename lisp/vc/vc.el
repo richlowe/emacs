@@ -1,6 +1,6 @@
 ;;; vc.el --- drive a version-control system from within Emacs  -*- lexical-binding:t -*-
 
-;; Copyright (C) 1992-1998, 2000-2018 Free Software Foundation, Inc.
+;; Copyright (C) 1992-1998, 2000-2019 Free Software Foundation, Inc.
 
 ;; Author:     FSF (see below for full credits)
 ;; Maintainer: emacs-devel@gnu.org
@@ -1966,10 +1966,13 @@ Use BACKEND as the VC backend if specified."
 	(with-current-buffer filebuf
 	  (let ((failed t))
 	    (unwind-protect
-		(let ((coding-system-for-read 'no-conversion)
-		      (coding-system-for-write 'no-conversion))
+		(let ((coding-system-for-read 'no-conversion))
 		  (with-temp-file filename
 		    (let ((outbuf (current-buffer)))
+                      ;; We will read the backend's output with no
+                      ;; conversions, so we should also save the
+                      ;; temporary file with no encoding conversions.
+                      (setq buffer-file-coding-system 'no-conversion)
 		      ;; Change buffer to get local value of
 		      ;; vc-checkout-switches.
 		      (with-current-buffer filebuf

@@ -1,6 +1,6 @@
 ;;; smtpmail.el --- simple SMTP protocol (RFC 821) for sending mail
 
-;; Copyright (C) 1995-1996, 2001-2018 Free Software Foundation, Inc.
+;; Copyright (C) 1995-1996, 2001-2019 Free Software Foundation, Inc.
 
 ;; Author: Tomoji Kagatani <kagatani@rbc.ncl.omron.co.jp>
 ;; Maintainer: Simon Josefsson <simon@josefsson.org>
@@ -256,7 +256,7 @@ The list is in preference order.")
 			       (fullname-end (point-marker)))
 			   (goto-char fullname-start)
 			   ;; Look for a character that cannot appear unquoted
-			   ;; according to RFC 822.
+			   ;; according to RFC 822 or its successors.
 			   (if (re-search-forward "[^- !#-'*+/-9=?A-Z^-~]"
 						  fullname-end 1)
 			       (progn
@@ -274,8 +274,9 @@ The list is in preference order.")
 			   (insert fullname)
 			   (let ((fullname-end (point-marker)))
 			     (goto-char fullname-start)
-			     ;; RFC 822 says \ and nonmatching parentheses
-			     ;; must be escaped in comments.
+			     ;; RFC 822 and its successors say \ and
+			     ;; nonmatching parentheses must be
+			     ;; escaped in comments.
 			     ;; Escape every instance of ()\ ...
 			     (while (re-search-forward "[()\\]" fullname-end 1)
 			       (replace-match "\\\\\\&" t))

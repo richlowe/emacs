@@ -1,6 +1,6 @@
 ;;; js.el --- Major mode for editing JavaScript  -*- lexical-binding: t -*-
 
-;; Copyright (C) 2008-2018 Free Software Foundation, Inc.
+;; Copyright (C) 2008-2019 Free Software Foundation, Inc.
 
 ;; Author: Karl Landstrom <karl.landstrom@brgeight.se>
 ;;         Daniel Colascione <dan.colascione@gmail.com>
@@ -479,6 +479,7 @@ This applies to function movement, marking, and so on."
   "Align continuation of non-empty ([{ lines in `js-mode'."
   :version "26.1"
   :type 'boolean
+  :safe 'booleanp
   :group 'js)
 
 (defcustom js-comment-lineup-func #'c-lineup-C-comments
